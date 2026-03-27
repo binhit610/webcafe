@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review - DrinkHub</title>
+    <link rel="stylesheet" href="../../component/header/header.css">
+    <link rel="stylesheet" href="../../component/footer/footer.css">
+    <link rel="stylesheet" href="./listPage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        .cafe-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cafe-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <h2>Chào mừng đến với Danh sách quán</h2>
+
+        <div class="filter">
+            <input type="text" id="searchInput" placeholder="Tìm quán cafe...">
+            <select id="locQuan">
+                <option value="all">Tất cả</option>
+                <option value="Quận 1">Quận 1</option>
+                <option value="Quận 3">Quận 3</option>
+                <option value="Bình Thạnh">Bình Thạnh</option>
+                <option value="Phú Nhuận">Phú Nhuận</option>
+                <option value="Gò Vấp">Gò Vấp</option>
+            </select>
+            <button onclick="locQuan()">Lọc</button>
+        </div>
+
+        <div id="listCafe"></div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // Danh sách quán với đầy đủ thông tin
+        const danhSachQuan = [
+            {
+                id: 1, ten: "Oromia Coffee", quan: "Quận 3", rating: "4.7", review: "120", delivery: "Giao nhanh",
+                img: "../listPage/img/img1.jpg", address: "123 Nguyễn Thị Minh Khai, Quận 3", openTime: "07:00 - 22:00", phone: "0901 234 567",
+                description: "Oromia Coffee là quán cà phê phong cách hiện đại, không gian thoáng mát, thích hợp làm việc và thư giãn. Cà phê được rang xay tại chỗ đảm bảo hương vị tươi ngon nhất.",
+                menu: [
+                    { name: "Cà phê sữa đá", price: "39.000đ" },
+                    { name: "Bạc xỉu", price: "42.000đ" },
+                    { name: "Cà phê đen đá", price: "35.000đ" },
+                    { name: "Americano", price: "45.000đ" },
+                    { name: "Cappuccino", price: "52.000đ" },
+                    { name: "Latte", price: "52.000đ" }
+                ],
+                utilities: ["Wifi miễn phí", "Máy lạnh", "Ổ cắm điện", "Nhạc nhẹ", "Khu vực làm việc yên tĩnh"]
+            },
+            {
+                id: 2, ten: "The Workshop", quan: "Quận 1", rating: "4.6", review: "95", delivery: "Giao nhanh",
+                img: "../listPage/img/img2.jpg", address: "27 Ngô Đức Kế, Quận 1", openTime: "08:00 - 22:30", phone: "0902 345 678",
+                description: "The Workshop nổi tiếng với không gian công nghiệp độc đáo và cà phê rang xay tại chỗ. Đây là điểm đến lý tưởng cho những tín đồ cà phê muốn trải nghiệm hương vị đặc sắc.",
+                menu: [
+                    { name: "Pour Over", price: "89.000đ" },
+                    { name: "Cold Brew", price: "75.000đ" },
+                    { name: "Espresso", price: "55.000đ" },
+                    { name: "Cappuccino", price: "65.000đ" },
+                    { name: "Matcha Latte", price: "75.000đ" }
+                ],
+                utilities: ["Wifi tốc độ cao", "Máy lạnh", "Ổ cắm", "Khu vực yên tĩnh", "Không gian sáng tạo"]
+            },
+            {
+                id: 3, ten: "L'usine", quan: "Quận 1", rating: "4.5", review: "88", delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img3.jpg", address: "151 Đồng Khởi, Quận 1", openTime: "08:00 - 21:00", phone: "0903 456 789",
+                description: "L'usine kết hợp giữa gallery nghệ thuật và không gian cà phê sang trọng. Nơi đây thường xuyên tổ chức triển lãm và sự kiện văn hóa độc đáo.",
+                menu: [
+                    { name: "Latte", price: "65.000đ" },
+                    { name: "Matcha Latte", price: "75.000đ" },
+                    { name: "Soda việt quất", price: "59.000đ" },
+                    { name: "Bánh croissant", price: "45.000đ" }
+                ],
+                utilities: ["Wifi", "Máy lạnh", "Art space", "Ẩm thực Âu", "Không gian sang trọng"]
+            },
+            {
+                id: 4, ten: "Thinker & Dreamer", quan: "Quận 1", rating: "4.8", review: "140", delivery: "Giao nhanh",
+                img: "../listPage/img/img4.jpg", address: "2 Hồ Hảo Hớn, Quận 1", openTime: "07:30 - 22:00", phone: "0904 567 890",
+                description: "Không gian xanh mát, lý tưởng cho những ai yêu thiên nhiên và sự tĩnh lặng. Thinker & Dreamer mang đến trải nghiệm thư giãn tuyệt vời giữa lòng thành phố.",
+                menu: [
+                    { name: "Cappuccino", price: "55.000đ" },
+                    { name: "Trà hoa cúc", price: "45.000đ" },
+                    { name: "Sinh tố bơ", price: "59.000đ" },
+                    { name: "Bánh mousse chanh", price: "49.000đ" }
+                ],
+                utilities: ["Wifi", "Sân vườn", "Pet friendly", "Máy lạnh", "Không gian xanh"]
+            },
+            {
+                id: 5, ten: "Coffee Hut", quan: "Bình Thạnh", rating: "4.5", review: "60", delivery: "Giao nhanh",
+                img: "../listPage/img/img5.jpg", address: "15 Nguyễn Gia Trí, Bình Thạnh", openTime: "06:30 - 21:30", phone: "0905 678 901",
+                description: "Coffee Hut mang phong cách retro ấm cúng, thân thiện. Không gian nhỏ xinh nhưng đầy đủ tiện nghi, phù hợp để hẹn hò và gặp gỡ bạn bè.",
+                menu: [
+                    { name: "Cà phê sữa", price: "35.000đ" },
+                    { name: "Sữa chua cà phê", price: "42.000đ" },
+                    { name: "Trà sữa trân châu", price: "45.000đ" },
+                    { name: "Bánh flan", price: "25.000đ" }
+                ],
+                utilities: ["Wifi", "Máy lạnh", "Nhạc nhẹ", "Chỗ đỗ xe"]
+            },
+            {
+                id: 6, ten: "The Coffee House", quan: "Phú Nhuận", rating: "4.4", review: "110", delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img6.jpg", address: "123 Phan Xích Long, Phú Nhuận", openTime: "07:00 - 22:30", phone: "0906 789 012",
+                description: "The Coffee House - không gian quen thuộc với nhiều người yêu cà phê. Menu đa dạng, phục vụ nhanh chóng và thân thiện.",
+                menu: [
+                    { name: "Cà phê sữa đá", price: "39.000đ" },
+                    { name: "Bạc xỉu", price: "45.000đ" },
+                    { name: "Trà đào cam sả", price: "49.000đ" }
+                ],
+                utilities: ["Wifi", "Máy lạnh", "Ổ cắm", "Không gian thoải mái"]
+            },
+            {
+                id: 7, ten: "VIP COFFEE", quan: "Gò Vấp", rating: "4.8", review: "90", delivery: "Giao nhanh",
+                img: "../listPage/img/img7.jpg", address: "389/24 Quang Trung, Gò Vấp", openTime: "07:00 - 22:30", phone: "0907 890 123",
+                description: "VIP COFFEE - điểm đến lý tưởng cho những ai yêu thích không gian sang trọng và view đẹp. Quán có khu vực ngoài trời thoáng mát.",
+                menu: [
+                    { name: "Cà phê rang xay", price: "49.000đ" },
+                    { name: "Soda việt quất", price: "55.000đ" }
+                ],
+                utilities: ["Wifi", "Máy lạnh", "View đẹp", "Chỗ đỗ xe rộng"]
+            },
+            {
+                id: 8,
+                ten: "Mây Coffee",
+                quan: "Phú Nhuận",
+                rating: "4.7",
+                review: "72",
+                delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img8.jpg",
+                address: "12 Hoa Sữa, Phú Nhuận, Ho Chi Minh City",
+                openTime: "07:00 - 22:00",
+                phone: "0901 222 333",
+                description: "Mây Coffee – quán cà phê sân thượng với không gian thoáng mát, nhiều cây xanh, thích hợp ngắm hoàng hôn và thư giãn cuối tuần.",
+                menu: [
+                    { name: "Cà phê sữa", price: "45.000đ" },
+                    { name: "Trà đào", price: "50.000đ" }
+                ],
+                utilities: ["Wifi", "Sân thượng", "View đẹp"]
+            },
+            {
+                id: 9, ten: "Sài Gòn Chic", quan: "Gò Vấp", rating: "4.7", review: "92", delivery: "Giao nhanh",
+                img: "../listPage/img/img9.jpg", address: "Số 82, đường 27, phường 6, Gò Vấp, Ho Chi Minh City", openTime: "07:00 - 22:30", phone: "0907 890 233",
+                description: "Sài Gòn Chic – điểm đến lý tưởng cho những ai yêu thích không gian vintage xanh mát, yên tĩnh giữa lòng thành phố, với sân vườn thoáng đãng và nhiều góc check-in cực chill.",
+                menu: [
+                    { name: "Cà phê muối", price: "49.000đ" },
+                    { name: "Sinh tố mảng cầu", price: "55.000đ" }
+                ],
+                utilities: ["Wifi", "Máy lạnh", "View đẹp", "Hồ cá tự nhiên"]
+            },
+            {
+                id: 10,
+                ten: "Gió Cafe",
+                quan: "Bình Thạnh",
+                rating: "4.6",
+                review: "65",
+                delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img10.jpg",
+                address: "45 D2, Bình Thạnh, Ho Chi Minh City",
+                openTime: "06:30 - 22:30",
+                phone: "0903 444 555",
+                description: "Gió Cafe – quán cà phê sân vườn yên tĩnh, nhiều cây xanh và hồ nước nhỏ, rất thích hợp thư giãn và làm việc.",
+                menu: [
+                    { name: "Bạc xỉu", price: "42.000đ" },
+                    { name: "Sinh tố bơ", price: "55.000đ" }
+                ],
+                utilities: ["Wifi", "Sân vườn", "Yên tĩnh"]
+            },
+            {
+                id: 11, ten: "Thức COFFE", quan: "Gò Vấp", rating: "4.9", review: "98", delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img11.jpg", address: "45 Nguyễn Oanh, Quận Gò Vấp,Ho Chi Minh City", openTime: "07:00 - 23:30", phone: "0967 590 253",
+                description: "Thức Coffee – điểm đến lý tưởng cho những ai thích cà phê đêm, không gian yên tĩnh, mở cửa 24/7 rất phù hợp để học bài, làm việc hoặc trò chuyện cùng bạn bè.",
+                menu: [
+                    { name: "Cafe sữa đá", price: "49.000đ" },
+                    { name: "Trà sửa kem trứng", price: "55.000đ" }
+                ],
+                utilities: ["Wifi", "View đẹp", "Hồ cá tự nhiên"]
+            },
+            {
+                id: 12,
+                ten: "Tiệm Cà Phê Của Ngoại",
+                quan: "Phú Nhuận",
+                rating: "4.8",
+                review: "85",
+                delivery: "Giao tiêu chuẩn",
+                img: "../listPage/img/img12.jpg",
+                address: "123/5 Phan Xích Long, Quận Phú Nhuận, Ho Chi Minh City",
+                openTime: "07:00 - 22:00",
+                phone: "0909 123 456",
+                description: "Tiệm Cà Phê Của Ngoại – quán cà phê mang phong cách hoài cổ, ấm cúng với không gian xưa, yên tĩnh, rất thích hợp để thư giãn, đọc sách và trò chuyện cùng bạn bè.",
+                menu: [
+                    { name: "Cà phê sữa đá", price: "45.000đ" },
+                    { name: "Bạc xỉu", price: "49.000đ" },
+                    { name: "Trà đào", price: "55.000đ" }
+                ],
+                utilities: ["Wifi", "Không gian vintage", "Yên tĩnh", "Chụp ảnh đẹp"]
+            }
+
+        ];
+
+        const container = document.getElementById("listCafe");
+
+        function hienThiDanhSach(ds) {
+            container.innerHTML = ds.map(q => `
+                <div class="cafe-card" onclick="chonQuan(${q.id})">
+                    <div class="img-box">
+                        <img src="${q.img}" alt="${q.ten}">
+                        <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                    </div>
+                    <div class="cafe-content">
+                        <div class="cafe-name">${q.ten}</div>
+                        <div class="cafe-rating">⭐ ${q.rating}</div>
+                        <div class="cafe-quan">📍 ${q.quan}</div>
+                        <div class="cafe-review">${q.review} reviews</div>
+                        <div class="delivery">${q.delivery}</div>
+                        <div class="tags">
+                            <span>Wifi</span>
+                            <span>Máy lạnh</span>
+                            <span>+5</span>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Hàm chọn quán và lưu vào localStorage để detail lấy
+        function chonQuan(id) {
+            const quan = danhSachQuan.find(q => q.id === id);
+            if (quan) {
+                localStorage.setItem("selectedCafe", JSON.stringify(quan));
+                window.location.href = "../detailPage/detailPage.html";
+            }
+        }
+
+        hienThiDanhSach(danhSachQuan);
+
+        function locQuan() {
+            const keyword = document.getElementById("searchInput").value.toLowerCase();
+            const quan = document.getElementById("locQuan").value;
+
+            const ketQua = danhSachQuan.filter(q => {
+                return (q.ten.toLowerCase().includes(keyword)) &&
+                    (quan === "all" || q.quan === quan);
+            });
+
+            hienThiDanhSach(ketQua);
+        }
+    </script>
+</body>
+
+</html>
